@@ -14,3 +14,14 @@ profiles.clj
 
 /node_modules
 /log
+
+.lein-repl-history
+*.log
+target/
+guestbook_dev\.db
+guestbook_test\.db
+.nrepl-port
+.lein-failures
+.rebel_readline_history
+*.db
+.shadow-cljs/
