@@ -26,3 +26,4 @@ guestbook_test\.db
 .rebel_readline_history
 *.db
 .shadow-cljs/
+/unoptimised-images
