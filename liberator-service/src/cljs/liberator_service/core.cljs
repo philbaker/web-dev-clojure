@@ -1,13 +1,19 @@
+;---
+; Excerpted from "Web Development with Clojure, Third Edition",
+; published by The Pragmatic Bookshelf.
+; Copyrights apply to this code. It may not be used to create training material,
+; courses, books, articles, and the like. Contact us if you are in doubt.
+; We make no guarantees that this code is fit for any purpose.
+; Visit http://www.pragmaticprogrammer.com/titles/dswdcloj3 for more book information.
+;---
 (ns liberator-service.core
   (:require
-    [ajax.core :refer [GET POST]]
-    [reagent.core :as reagent :refer [atom]]
-    [reagent.dom :as rdom]
-    [reagent.session :as session]
-    [reitit.frontend :as reitit]
-    [clerk.core :as clerk]
-    [accountant.core :as accountant]))
-
+   [ajax.core :refer [GET POST]]
+   [reagent.core :as reagent :refer [atom]]
+   [reagent.session :as session]
+   [reitit.frontend :as reitit]
+   [clerk.core :as clerk]
+   [accountant.core :as accountant]))
 
 ;; -------------------------
 ;; Views
@@ -31,23 +37,23 @@
 
 (defn get-items []
   (GET "/items"
-       {:error-handler
-        #(session/put! :error (:response %))
-        :handler
-        #(session/put! :items (parse-items %))}))
+    {:error-handler
+     #(session/put! :error (:response %))
+     :handler
+     #(session/put! :items (parse-items %))}))
 
 (defn add-item! [item]
   (session/remove! :error)
   (POST "/items"
-        {:headers {"x-csrf-token"
-                   (.-value (.getElementById js/document "__anti-forgery-token"))}
-         :format :raw
-         :params {:item (str @item)}
-         :error-handler #(session/put! :error (:response %))
-         :handler #(do
-                     (println "updating")
-                     (session/update-in! [:items] conj @item)
-                     (reset! item nil))}))
+    {:headers {"x-csrf-token"
+               (.-value (.getElementById js/document "__anti-forgery-token"))}
+     :format :raw
+     :params {:item (str @item)}
+     :error-handler #(session/put! :error (:response %))
+     :handler #(do
+                 (println "updating")
+                 (session/update-in! [:items] conj @item)
+                 (reset! item nil))}))
 
 (defn item-input-component []
   (let [item (atom nil)]
@@ -61,7 +67,6 @@
        [:button
         {:on-click #(add-item! item)}
         "Add To-Do"]])))
-
 
 ;; -------------------------
 ;; Routes
@@ -90,26 +95,8 @@
    [item-input-component]])
 
 (defn about-page []
-  (fn [] [:span.main
-          [:h1 "About liberator-service"]]))
-
-; (defn items-page []
-;   (fn []
-;     [:span.main
-;      [:h1 "The items of liberator-service"]
-;      [:ul (map (fn [item-id]
-;                  [:li {:name (str "item-" item-id) :key (str "item-" item-id)}
-;                   [:a {:href (path-for :item {:item-id item-id})} "Item: " item-id]])
-;                (range 1 60))]]))
-
-; (defn item-page []
-;   (fn []
-;     (let [routing-data (session/get :route)
-;           item (get-in routing-data [:route-params :item-id])]
-;       [:span.main
-;        [:h1 (str "Item " item " of liberator-service")]
-;        [:p [:a {:href (path-for :items)} "Back to the list of items"]]])))
-
+  [:div [:h2 "About liberator-service"]
+   [:div [:a {:href "#/"} "go to the home page"]]])
 
 ;; -------------------------
 ;; Translate routes -> page components
@@ -117,10 +104,7 @@
 (defn page-for [route]
   (case route
     :index #'home-page
-    :about #'about-page
-    :items #'items-page
-    :item #'item-page))
-
+    :about #'about-page))
 
 ;; -------------------------
 ;; Page mounting component
@@ -141,7 +125,7 @@
 ;; Initialize app
 
 (defn mount-root []
-  (rdom/render [current-page] (.getElementById js/document "app")))
+  (reagent/render [current-page] (.getElementById js/document "app")))
 
 (defn init! []
   (clerk/initialize!)

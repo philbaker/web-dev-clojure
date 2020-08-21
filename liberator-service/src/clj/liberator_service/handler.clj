@@ -1,12 +1,12 @@
 (ns liberator-service.handler
   (:require
-   [liberator.core :refer [defresource resource request-method-in]]
-   [reitit.ring :as reitit-ring]
-   [liberator-service.middleware :refer [middleware]]
-   [clojure.java.io :as io]
-   [hiccup.page :refer [include-js include-css html5]]
-   [config.core :refer [env]]
-   [ring.util.anti-forgery :refer [anti-forgery-field]]))
+    [reitit.ring :as reitit-ring]
+    [liberator-service.middleware :refer [middleware]]
+    [hiccup.page :refer [include-js include-css html5]]
+    [config.core :refer [env]]
+    [clojure.java.io :as io]
+    [liberator.core :refer [defresource resource request-method-in]]
+    [ring.util.anti-forgery :refer [anti-forgery-field]]))
 
 (def mount-target
   [:div#app
@@ -31,18 +31,11 @@
       mount-target
       (include-js "/js/app.js")]]))
 
-; (defn index-handler
-;   [_request]
-;   {:status 200
-;    :headers {"Content-Type" "text/html"}
-;    :body (loading-page)})
-
 (defresource home
   :allowed-methods [:get]
   :handle-ok loading-page
   :etag "fixed-etag"
-  :avaliable-media-types ["text/html"])
-
+  :available-media-types ["text/html"])
 
 (defresource items
   :allowed-methods [:get :post]
@@ -51,20 +44,20 @@
 
   :post!
   (fn [context]
-      (let [item (-> context :request :params :item)]
-           (spit (io/file "items") (str item "\n") :append true)))
+    (let [item (-> context :request :params :item)]
+      (spit (io/file "items") (str item "\n") :append true)))
   :handle-created "ok"
 
   :malformed? (fn [context]
-                  (-> context :request :params :item empty?))
+                (-> context :request :params :item empty?))
   :handle-malformed "item value cannot be empty!")
 
 (def app
   (reitit-ring/ring-handler
-   (reitit-ring/router
-     [["/" {:get home}]
-      ["/items" items]])
-   (reitit-ring/routes
-    (reitit-ring/create-resource-handler {:path "/" :root "/public"})
-    (reitit-ring/create-default-handler))
-   {:middleware middleware}))
+    (reitit-ring/router
+      [["/" {:get home}]
+       ["/items" items]])
+    (reitit-ring/routes
+      (reitit-ring/create-resource-handler {:path "/" :root "/public"})
+      (reitit-ring/create-default-handler))
+    {:middleware middleware}))

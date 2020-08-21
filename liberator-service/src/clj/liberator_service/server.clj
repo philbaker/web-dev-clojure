@@ -1,9 +1,9 @@
 (ns liberator-service.server
-    (:require
-     [liberator-service.handler :refer [app]]
-     [config.core :refer [env]]
-     [ring.adapter.jetty :refer [run-jetty]])
-    (:gen-class))
+  (:require
+    [liberator-service.handler :refer [app]]
+    [config.core :refer [env]]
+    [ring.adapter.jetty :refer [run-jetty]])
+  (:gen-class))
 
 (defn -main [& args]
   (let [port (or (env :port) 3000)]
